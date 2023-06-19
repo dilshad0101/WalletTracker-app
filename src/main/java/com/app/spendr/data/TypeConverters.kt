@@ -5,8 +5,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-class Converters {
-    @TypeConverter
+class Converters { @TypeConverter
     fun fromTimestamp(value: Long?): LocalDate? {
         return value?.let { LocalDate.ofEpochDay(it) }
     }

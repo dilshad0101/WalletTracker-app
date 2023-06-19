@@ -15,12 +15,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.app.spendr.data.Transaction
+import com.app.spendr.presentation.home.UsersCurrency
 import kotlin.random.Random
 
 @Composable
 fun StatisticsScreen(
     stats: Stats,
-    deleteTransaction : (Transaction) -> Unit
+    deleteTransaction : (Transaction) -> Unit,
+    savedCurrency: UsersCurrency
 ){
     var graphInDisplay by remember {
         mutableStateOf(GraphType.EARNED)
@@ -38,7 +40,7 @@ fun StatisticsScreen(
             item{
                 Column(modifier = Modifier
                     .padding(vertical = 10.dp)
-                    .clip(RoundedCornerShape(10))
+                    .clip(RoundedCornerShape(5))
                     .background(MaterialTheme.colorScheme.tertiaryContainer)
 
                 ){
@@ -49,7 +51,7 @@ fun StatisticsScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Row {
-                            Text(text = "$${stats.balance}",
+                            Text(text = "${savedCurrency.symbols}${stats.balance}",
                                 style = MaterialTheme.typography.displayLarge,
                                 color = MaterialTheme.colorScheme.primary)
                         }
@@ -121,7 +123,8 @@ fun StatisticsScreen(
                     stats,
                     onGraphChange = {
                         graphInDisplay = it },
-                    deleteTransaction = {deleteTransaction.invoke(it)}
+                    deleteTransaction = {deleteTransaction.invoke(it)},
+                    savedCurrency
                 )
 
             }

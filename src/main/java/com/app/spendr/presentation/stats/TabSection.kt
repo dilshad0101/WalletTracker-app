@@ -17,12 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.app.spendr.data.Transaction
-import com.app.spendr.presentation.home.TransactionCard
+import com.app.spendr.presentation.components.TransactionCard
+import com.app.spendr.presentation.home.UsersCurrency
 
 @Composable
 fun TabSection(stats: Stats,
                onGraphChange: (GraphType)-> Unit,
-               deleteTransaction: (Transaction) -> Unit
+               deleteTransaction: (Transaction) -> Unit,
+               savedCurrency: UsersCurrency
                ){
 
     val tabs = listOf(
@@ -64,7 +66,8 @@ fun TabSection(stats: Stats,
     }
     TabSections(selectedTabIndex,
         stats,
-        deleteTransaction = { deleteTransaction.invoke(it)}
+        deleteTransaction = { deleteTransaction.invoke(it)},
+        savedCurrency = savedCurrency
         )
 }
 
@@ -72,7 +75,9 @@ fun TabSection(stats: Stats,
 @Composable
 fun TabSections(selectedTabIndex: Int,
                 stats: Stats,
-                deleteTransaction: (Transaction) -> Unit){
+                deleteTransaction: (Transaction) -> Unit,
+                savedCurrency : UsersCurrency
+                ){
     AnimatedContent(targetState = selectedTabIndex) {
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -85,7 +90,8 @@ fun TabSections(selectedTabIndex: Int,
                     description = it.description,
                     amount = it.amount,
                     isSavings = it.isSavings,
-                    onDelete = {deleteTransaction.invoke(it)}
+                    onDelete = {deleteTransaction.invoke(it)},
+                    savedCurrency = savedCurrency
                     )
             }
         }

@@ -16,8 +16,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun LineChart(
+    modifier: Modifier = Modifier,
     data: List<Pair<String, Double>> = emptyList(),
-    modifier: Modifier = Modifier
 ) {
     val spacing = 100f
     val graphColor = Color.Red

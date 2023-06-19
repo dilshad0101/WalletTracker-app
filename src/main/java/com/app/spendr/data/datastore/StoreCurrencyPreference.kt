@@ -10,20 +10,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class StoreCurrencyPreference(private val context: Context) {
-
-    // to make sure there is only one instance
+    // used to store Currency preference of user (eg: USD, GBP, INR)
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("UserEmail")
+        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("USER_PREF")
         val USER_CURRENCY_KEY = stringPreferencesKey("user_currency")
     }
 
-    // to get the email
     val getCurrencyPreference: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[USER_CURRENCY_KEY] ?: ""
         }
 
-    // to save the email
     suspend fun saveCurrencyPreference(name: String) {
         context.dataStore.edit { preferences ->
             preferences[USER_CURRENCY_KEY] = name

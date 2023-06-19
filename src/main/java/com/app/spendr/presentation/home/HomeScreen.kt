@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.app.spendr.data.Transaction
+import com.app.spendr.presentation.components.TransactionCard
 import com.app.spendr.presentation.navigation.Screen
 import com.app.spendr.presentation.stats.extractData
 
@@ -22,23 +23,32 @@ import com.app.spendr.presentation.stats.extractData
 fun HomeScreen(
     navController: NavController,
     transactionData: List<Transaction>,
-    deleteTransaction : (Transaction) -> Unit
+    deleteTransaction : (Transaction) -> Unit,
+    changePreference : (UsersCurrency) -> Unit,
+    savedCurrency: UsersCurrency
+
 ){
     val activity = LocalContext.current as? Activity
     BackHandler(true) {
         activity?.finish()
     }
+
+
+
     Scaffold() { padding ->
         Column(modifier = Modifier
             .padding(padding)
         ) {
-            BalanceCard {
-
+            BalanceCard(balance =  {
                 var balance by mutableStateOf(0)
-                    balance = extractData(transactionData).balance
+                balance = extractData(transactionData).balance
                 balance
-
-            }
+                                   },
+                selectedCurrency = savedCurrency,
+                onCurrencySelection = {
+                    changePreference.invoke(it)
+                }
+                )
             Row(modifier = Modifier.padding(top = 8.dp)){
                 NavigationCards(
                     savingsButton = true,
@@ -67,7 +77,8 @@ fun HomeScreen(
                             description = it.description,
                             amount = it.amount,
                             isSavings = it.isSavings,
-                            onDelete = { deleteTransaction.invoke(it)}
+                            onDelete = { deleteTransaction.invoke(it)},
+                            savedCurrency = savedCurrency
                         )
                     }
                     item { Spacer(modifier = Modifier.height(10.dp)) }

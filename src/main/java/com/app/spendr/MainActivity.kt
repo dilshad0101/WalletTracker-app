@@ -14,7 +14,6 @@ import com.app.spendr.presentation.theme.SpendrTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             SpendrTheme {
                 Surface(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {

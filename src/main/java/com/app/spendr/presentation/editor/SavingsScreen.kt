@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import com.app.spendr.R
 import com.app.spendr.data.Transaction
 import com.app.spendr.presentation.TopBar
+import com.app.spendr.presentation.home.UsersCurrency
 import com.app.spendr.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -25,7 +26,10 @@ import java.time.LocalDate
 
 var selectedChipValue = (Description.Other.text)
 @Composable
-fun SavingsScreen(navController: NavController, onSave: (Transaction) -> Unit){
+fun SavingsScreen(navController: NavController,
+                  onSave: (Transaction) -> Unit,
+                  savedCurrency: UsersCurrency
+){
     Scaffold(containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary
         ) {
@@ -308,7 +312,7 @@ fun SavingsScreen(navController: NavController, onSave: (Transaction) -> Unit){
             textStyle = MaterialTheme.typography.labelMedium,
             prefix = {
                 Text(
-                    text = "$",
+                    text = savedCurrency.symbols,
                     color = MaterialTheme.colorScheme.primary,)
                      },
             singleLine = true,

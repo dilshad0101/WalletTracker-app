@@ -1,21 +1,15 @@
 package com.app.spendr.presentation.navigation
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.NavHost
@@ -29,8 +23,10 @@ import com.app.spendr.presentation.TopBar
 import com.app.spendr.presentation.editor.ExpenseScreen
 import com.app.spendr.presentation.home.HomeScreen
 import com.app.spendr.presentation.editor.SavingsScreen
+import com.app.spendr.util.streamlinePreference
 import com.app.spendr.presentation.stats.StatisticsScreen
 import com.app.spendr.presentation.stats.extractData
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -41,8 +37,7 @@ fun Navigation(owner: ViewModelStoreOwner){
     val scope = rememberCoroutineScope()
 
     val dataStore = StoreCurrencyPreference(context)
-    val savedCurrency = dataStore.getCurrencyPreference.collectAsState(initial = "")
-
+    val savedCurrency by dataStore.getCurrencyPreference.collectAsState(initial = "")
 
     val dataViewModel = ViewModelProvider(owner)[DataViewModel::class.java]
     val _transactionData: LiveData<List<Transaction>> = dataViewModel.readAllData
@@ -80,12 +75,22 @@ fun Navigation(owner: ViewModelStoreOwner){
                             extractData(transactionData),
                             deleteTransaction = {
                                 dataViewModel.deleteTransaction(it)
-                            }
+                            },
+                            savedCurrency = streamlinePreference(savedCurrency)
+
+
                         )
                         false ->HomeScreen(
                             navController,
                             transactionData,
-                            deleteTransaction = {dataViewModel.deleteTransaction(it)}
+                            deleteTransaction = {dataViewModel.deleteTransaction(it)},
+                            changePreference = {
+                                scope.launch{
+                                    dataStore.saveCurrencyPreference(it.text)
+                                }
+
+                            },
+                            savedCurrency = streamlinePreference(savedCurrency)
                             )
                     }
                 }
@@ -102,14 +107,17 @@ fun Navigation(owner: ViewModelStoreOwner){
                 dataViewModel.addTransaction(it)
                 navController.navigate(Screen.MainScreen.route)
 
-            }
+            },
+                savedCurrency = streamlinePreference(savedCurrency)
             )
         }
         composable(Screen.Expense.route){
             ExpenseScreen(navController = navController, onSave = {
                 dataViewModel.addTransaction(it)
                 navController.navigate(Screen.MainScreen.route)
-            })
+            },
+            savedCurrency = streamlinePreference(savedCurrency)
+            )
         }
 
     }

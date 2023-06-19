@@ -1,4 +1,4 @@
-package com.app.spendr.presentation.home
+package com.app.spendr.presentation.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -16,26 +16,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.app.spendr.R
 import com.app.spendr.presentation.editor.Description
+import com.app.spendr.presentation.home.UsersCurrency
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TransactionCard(
     title: String,
     description: String,
     amount: Int,
     isSavings : Boolean,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    savedCurrency: UsersCurrency
 ){
+
     val sign = if (isSavings) "+" else "-"
     Column {
         var deleteMode by remember{ mutableStateOf(false) }
@@ -100,7 +101,7 @@ fun TransactionCard(
                         }
                     }
                     Text(
-                        text = "$sign$$amount",
+                        text = sign+ savedCurrency.symbols +amount,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(end = 6.dp)
@@ -147,8 +148,9 @@ fun TransactionCard(
 
 
 }
+
 @Composable
-fun IconsFromURL(url: String) {
+fun IconsFromURL(url: String,modifier: Modifier = Modifier) {
     SubcomposeAsyncImage(model =url,
         contentDescription =null,
         contentScale = ContentScale.FillBounds,
@@ -158,6 +160,7 @@ fun IconsFromURL(url: String) {
         loading = {
             CircularProgressIndicator()
         },
-        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-        )
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+        modifier = modifier
+    )
 }
