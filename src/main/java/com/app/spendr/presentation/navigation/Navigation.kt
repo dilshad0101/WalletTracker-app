@@ -23,13 +23,13 @@ import com.app.spendr.presentation.TopBar
 import com.app.spendr.presentation.editor.ExpenseScreen
 import com.app.spendr.presentation.home.HomeScreen
 import com.app.spendr.presentation.editor.SavingsScreen
+import com.app.spendr.presentation.home.EntryScreenRoute
 import com.app.spendr.util.streamlinePreference
 import com.app.spendr.presentation.stats.StatisticsScreen
 import com.app.spendr.presentation.stats.extractData
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Navigation(owner: ViewModelStoreOwner){
 
@@ -42,62 +42,20 @@ fun Navigation(owner: ViewModelStoreOwner){
     val dataViewModel = ViewModelProvider(owner)[DataViewModel::class.java]
     val _transactionData: LiveData<List<Transaction>> = dataViewModel.readAllData
     val transactionData: List<Transaction> by _transactionData.observeAsState(initial = emptyList())
-    val stats = extractData(transactionData)
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.MainScreen.route){
         composable(Screen.MainScreen.route){
-            var isInStatisticsSection by remember {
-                mutableStateOf(false)
-            }
-            Column(modifier = Modifier
-                .padding(horizontal = 20.dp)) {
-                TopBar(
-                    firstBtnIcon = R.drawable.baseline_dehaze_24,
-                    onFirstBtnClick = {},
-                    secondBtnIcon = R.drawable.outline_notifications_24,
-                    onSecondBtnClick = {},
-                    showNavTab = true,
-                    onStatisticsSection = {
-                        isInStatisticsSection = (it)
-                    }
-
-                )
-                AnimatedContent(
-                    isInStatisticsSection,
-                    transitionSpec = {ContentTransform(
-                        targetContentEnter = slideInHorizontally(tween(300)),
-                        initialContentExit = slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left)
-                    )}
-                ) { targetState:Boolean->
-                    when(targetState){
-                        true ->StatisticsScreen(
-                            extractData(transactionData),
-                            deleteTransaction = {
-                                dataViewModel.deleteTransaction(it)
-                            },
-                            savedCurrency = streamlinePreference(savedCurrency)
-
-
-                        )
-                        false ->HomeScreen(
-                            navController,
-                            transactionData,
-                            deleteTransaction = {dataViewModel.deleteTransaction(it)},
-                            changePreference = {
-                                scope.launch{
-                                    dataStore.saveCurrencyPreference(it.text)
-                                }
-
-                            },
-                            savedCurrency = streamlinePreference(savedCurrency)
-                            )
-                    }
-                }
-
-
-            }
-
+            EntryScreenRoute(
+                deletionEvent = {dataViewModel.deleteTransaction(it)},
+                transactionData = transactionData,
+                changePreferenceEvent = {
+                    scope.launch {
+                        dataStore.saveCurrencyPreference(it) }
+                },
+                savedCurrency = savedCurrency,
+                navController = navController
+            )
         }
 
         composable(Screen.Savings.route){
@@ -106,7 +64,6 @@ fun Navigation(owner: ViewModelStoreOwner){
             onSave = {
                 dataViewModel.addTransaction(it)
                 navController.navigate(Screen.MainScreen.route)
-
             },
                 savedCurrency = streamlinePreference(savedCurrency)
             )
