@@ -1,34 +1,21 @@
 package com.app.spendr.presentation.navigation
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.app.spendr.R
 import com.app.spendr.data.DataViewModel
 import com.app.spendr.data.Transaction
 import com.app.spendr.data.datastore.StoreCurrencyPreference
-import com.app.spendr.presentation.TopBar
 import com.app.spendr.presentation.editor.ExpenseScreen
-import com.app.spendr.presentation.home.HomeScreen
 import com.app.spendr.presentation.editor.SavingsScreen
-import com.app.spendr.presentation.home.EntryScreenRoute
 import com.app.spendr.util.streamlinePreference
-import com.app.spendr.presentation.stats.StatisticsScreen
-import com.app.spendr.presentation.stats.extractData
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun Navigation(owner: ViewModelStoreOwner){

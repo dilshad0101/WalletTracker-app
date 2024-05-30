@@ -42,7 +42,7 @@ fun HomeScreen(
             BalanceCard(balance =  {
                 var balance by mutableStateOf(0)
                 balance = extractData(transactionData).balance
-                balance
+                return@BalanceCard balance
                                    },
                 selectedCurrency = savedCurrency,
                 onCurrencySelection = {

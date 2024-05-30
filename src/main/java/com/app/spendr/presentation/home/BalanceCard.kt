@@ -46,7 +46,7 @@ fun BalanceCard(
             .padding(bottom = 5.dp, top = 5.dp)
 
     ) {
-        Box(
+        Column(
             modifier =
             Modifier.background(
                 Brush.horizontalGradient(
@@ -134,6 +134,7 @@ fun BalanceCard(
                     }
 
                 }
+
                 Column {
                     val transition = updateTransition(targetState = balanceState, label = "DigitTransition")
 
@@ -144,11 +145,17 @@ fun BalanceCard(
                         state
                     }
 
-                    Text("Your Balance", style = MaterialTheme.typography.displaySmall)
-                    AnimatedContent(targetState = digit
-                        ) {
-                        Text(text = "${selectedCurrency.symbols}${it.value}.00", style = MaterialTheme.typography.displayMedium)
-
+                    Text(
+                        text = "Your Balance",
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.primary)
+                    AnimatedContent(targetState = digit, label = "digit"
+                    ) {value:State<Int> ->
+                        Text(
+                            text = "${selectedCurrency.symbols}${value.value}.00",
+                            style = MaterialTheme.typography.displayMedium,
+                            color = MaterialTheme.colorScheme.primary
+                            )
                     }
                 }
 

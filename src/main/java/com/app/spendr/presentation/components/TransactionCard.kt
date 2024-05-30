@@ -41,7 +41,7 @@ fun TransactionCard(
     Column {
         var deleteMode by remember{ mutableStateOf(false) }
 
-        AnimatedContent(targetState = deleteMode) {
+        AnimatedContent(targetState = deleteMode, label = "") {
             if (!it){
                 Row(horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,

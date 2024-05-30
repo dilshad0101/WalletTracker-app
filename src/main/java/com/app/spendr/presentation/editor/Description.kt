@@ -2,15 +2,28 @@ package com.app.spendr.presentation.editor
 
 
 sealed class Description(val text: String) {
-    object Friend : Description("Friend")
-    object Family : Description("Family")
-    object Salary : Description("Salary")
-    object Reward : Description("Reward")
-    object Online : Description("Online")
-    object Rent : Description("Rent")
-    object Other : Description("Other")
-    object Food : Description("Food")
-    object Shopping : Description("Shopping")
+    data object Friend : Description("Friend")
+    data object Family : Description("Family")
+    data object Salary : Description("Salary")
+    data object Reward : Description("Reward")
+    data object Online : Description("Online")
+    data object Rent : Description("Rent")
+    data object Other : Description("Other")
+    data object Food : Description("Food")
+    data object Shopping : Description("Shopping")
 
-
+    companion object {
+        val descriptions: List<String> = listOf(
+            "Friend",
+            "Family",
+            "Salary",
+            "Reward",
+            "Online",
+           "Rent",
+            "Other",
+            "Food",
+            "Shopping"
+        )
+    }
 }
+

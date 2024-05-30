@@ -3,6 +3,10 @@ package com.app.spendr.presentation.editor
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -20,13 +24,12 @@ import com.app.spendr.data.Transaction
 import com.app.spendr.presentation.TopBar
 import com.app.spendr.presentation.home.UsersCurrency
 import com.app.spendr.presentation.navigation.Screen
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 
 // declaring variables globally looks ugly even though this approach for implementation of expense works fine.
 // if u found an alternative approach PLEASE do it.
-var _selectedChipValue = Description.Other.text
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExpenseScreen(navController: NavController,
                   onSave: (Transaction) -> Unit,
@@ -34,7 +37,7 @@ fun ExpenseScreen(navController: NavController,
                   ){
     Scaffold(containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary
-    ) {
+    ) { it ->
         BackHandler(true) {
             navController.navigate(Screen.MainScreen.route)
         }
@@ -46,64 +49,15 @@ fun ExpenseScreen(navController: NavController,
         }
         var amountTextField by remember{
             mutableStateOf(TextFieldValue("")) }
-        var isChip1Enabled by remember {
-            mutableStateOf(false)
-        }
-        var isChip2Enabled by remember {
-            mutableStateOf(false)
-        }
-        var isChip3Enabled by remember {
-            mutableStateOf(false)
-        }
-        var isChip4Enabled by remember {
-            mutableStateOf(false)
-        }
-        var isChip5Enabled by remember {
-            mutableStateOf(false)
-        }
-        var isChip6Enabled by remember {
-            mutableStateOf(false)
-        }
-        var isChip7Enabled by remember {
-            mutableStateOf(false)
-        }
 
-        var isChip1 by remember {
-            mutableStateOf(true)
+        var enabledChip by remember{
+            mutableStateOf("")
         }
-        var isChip2 by remember {
-            mutableStateOf(true)
-        }
-        var isChip3 by remember {
-            mutableStateOf(true)
-        }
-        var isChip4 by remember {
-            mutableStateOf(true)
-        }
-        var isChip5 by remember {
-            mutableStateOf(true)
-        }
-        var isChip6 by remember {
-            mutableStateOf(true)
-        }
-        var isChip7 by remember {
-            mutableStateOf(true)
-        }
-
-        fun closeAll(doReverse: Boolean){
-            isChip1 = doReverse
-            isChip2 = doReverse
-            isChip3 = doReverse
-            isChip4 = doReverse
-            isChip5 = doReverse
-            isChip6 = doReverse
-            isChip7 = doReverse
-        }
-
-
 
         Column(
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(it)
         ){
             val context = LocalContext.current
             TopBar(
@@ -114,7 +68,7 @@ fun ExpenseScreen(navController: NavController,
                         onSave.invoke(
                             Transaction(
                                 title = contentTextField.text,
-                                description = _selectedChipValue,
+                                description = enabledChip.ifBlank { Description.Other.text },
                                 amount = amountTextField.text.toInt(),
                                 id = 0,
                                 isSavings = false,
@@ -162,142 +116,21 @@ fun ExpenseScreen(navController: NavController,
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
                     .fillMaxWidth()
-
             )
-            Column(modifier = Modifier.padding(vertical = 8.dp)) {
-
-                Row(horizontalArrangement = Arrangement.Start){
-                    if(isChip1){
-                        Chips(
-                            text = Description.Friend.text,
-                            isEnabled = isChip1Enabled,
-                            onClick = {
-                                isChip1Enabled = if (isChip1Enabled) {
-                                    closeAll(doReverse = true)
-                                    false
-
-                                }else{
-                                    closeAll(doReverse = false)
-                                    isChip1 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Friend.text}
-                        )
+            Column(modifier = Modifier.padding(vertical = 8.dp)){
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(7.dp),
+                    ) {
+                    (Description.descriptions).forEach { text:String ->
+                        Chips(text = text, isEnabled = enabledChip == text) {
+                            enabledChip = if (enabledChip == text) {
+                                ""
+                            } else {
+                                text
+                            }
+                        }
                     }
-
-
-                    if(isChip2){
-                        Chips(
-                            text = Description.Family.text,
-                            isEnabled = isChip2Enabled,
-                            onClick = {
-                                isChip2Enabled = if (isChip2Enabled) {
-                                    closeAll(doReverse = true)
-                                    false
-
-                                }else{
-                                    closeAll(doReverse = false)
-                                    isChip2 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Family.text}
-                        )
-                    }
-                    if(isChip3){
-                        Chips(
-                            text = Description.Food.text,
-                            isEnabled = isChip3Enabled,
-                            onClick = {
-                                isChip3Enabled = if (isChip3Enabled) {
-                                    closeAll(doReverse = true)
-                                    false
-
-                                }else{
-                                    closeAll(doReverse = false)
-                                    isChip3 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Food.text}
-                        )
-                    }
-
-                    if(isChip4){
-                        Chips(
-                            text = Description.Rent.text,
-                            isEnabled = isChip4Enabled,
-                            onClick = {
-                                isChip4Enabled = if (isChip4Enabled) {closeAll(doReverse = true)
-                                    false
-
-                                }else{
-                                    closeAll(doReverse = false)
-                                    isChip4 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Rent.text}
-                        )
-                    }
-
                 }
-                Row(horizontalArrangement = Arrangement.Start) {
-                    if(isChip5){
-                        Chips(
-                            text = Description.Online.text,
-                            isEnabled = isChip5Enabled,
-                            onClick = {
-                                isChip5Enabled = if (isChip5Enabled) {closeAll(doReverse = true)
-                                    false
-
-                                }else{closeAll(doReverse = false)
-                                    isChip5 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Online.text}
-                        )
-                    }
-                    if(isChip6){
-                        Chips(
-                            text = Description.Shopping.text,
-                            isEnabled = isChip6Enabled,
-                            onClick = {
-                                isChip6Enabled = if (isChip6Enabled) {closeAll(doReverse = true)
-                                    false
-
-                                }else{
-                                    closeAll(doReverse = false)
-                                    isChip6 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Shopping.text}
-                        )
-                    }
-
-                    if(isChip7){
-                        Chips(
-                            text = Description.Other.text,
-                            isEnabled = isChip7Enabled,
-                            onClick = {
-                                isChip7Enabled = if (isChip7Enabled) {closeAll(doReverse = true)
-                                    false
-
-                                }else{
-                                    closeAll(doReverse = false)
-                                    isChip7 = true
-                                    true
-
-                                }
-                                _selectedChipValue = Description.Other.text}
-                        )
-                    }
-
-                }
-
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -325,7 +158,7 @@ fun ExpenseScreen(navController: NavController,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
-                    .fillMaxWidth(2f)
+                    .fillMaxWidth()
 
             )
 

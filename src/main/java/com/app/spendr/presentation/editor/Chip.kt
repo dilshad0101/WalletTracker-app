@@ -1,6 +1,9 @@
 package com.app.spendr.presentation.editor
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -28,7 +31,6 @@ fun Chips(text: String,isEnabled: Boolean, onClick: ()-> Unit){
                 Icon(Icons.Default.Close,null)
             }
         },
-        modifier = Modifier.padding(end = 7.dp)
 
     )
 }
