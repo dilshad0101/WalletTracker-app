@@ -33,8 +33,6 @@ fun HomeScreen(
         activity?.finish()
     }
 
-
-
     Scaffold() { padding ->
         Column(modifier = Modifier
             .padding(padding)

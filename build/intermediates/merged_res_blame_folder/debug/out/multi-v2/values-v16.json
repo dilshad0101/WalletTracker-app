@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.app.spendr.app-mergeDebugResources-83:/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\dilshad\\.gradle\\caches\\transforms-3\\9c25e482fad791d0b9a2c7c7814719a1\\transformed\\appcompat-1.6.1\\res\\values-v16\\values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "223"
+                    }
+                }
+            ]
+        }
+    ]
+}

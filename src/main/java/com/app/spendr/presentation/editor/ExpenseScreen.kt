@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -122,7 +123,7 @@ fun ExpenseScreen(navController: NavController,
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
                     ) {
                     (Description.descriptions).forEach { text:String ->
-                        Chips(text = text, isEnabled = enabledChip == text) {
+                        Chips(text = text, isEnabled = enabledChip == text || contentTextField.text.contains(text,ignoreCase = true)) {
                             enabledChip = if (enabledChip == text) {
                                 ""
                             } else {
@@ -156,6 +157,26 @@ fun ExpenseScreen(navController: NavController,
                     focusedTextColor = MaterialTheme.colorScheme.primary
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if(contentTextField.text.isNotBlank() && amountTextField.text.isDigitsOnly() && amountTextField.text.isNotBlank()){
+                            onSave.invoke(
+                                Transaction(
+                                    title = contentTextField.text,
+                                    description = enabledChip.ifBlank { Description.Other.text },
+                                    amount = amountTextField.text.toInt(),
+                                    id = 0,
+                                    isSavings = false,
+                                    date = date
+                                )
+                            )
+                        }else{
+                            Toast.makeText(context,"Invalid Input",Toast.LENGTH_SHORT).show()
+
+                        }
+
+                    }
+                ),
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
                     .fillMaxWidth()

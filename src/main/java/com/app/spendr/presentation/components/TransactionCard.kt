@@ -125,6 +125,7 @@ fun TransactionCard(
                         ) {
                         Icon(imageVector = Icons.Filled.Delete,
                             contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .size(40.dp)
 
@@ -134,7 +135,10 @@ fun TransactionCard(
                             interactionSource = remember{ MutableInteractionSource() },
                             modifier = Modifier.padding(start = 40.dp)
                         ) {
-                            Icon(Icons.Default.Close,null)
+                            Icon(Icons.Default.Close,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                                )
 
                         }
 
