@@ -8,14 +8,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.app.spendr.data.Transaction
 import com.app.spendr.presentation.home.UsersCurrency
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Composable
@@ -28,44 +31,50 @@ fun StatisticsScreen(
         mutableStateOf(GraphType.EARNED)
     }
     val listInDisplay = when(graphInDisplay){
-        GraphType.EARNED -> stats.earnedLog.sortedByDescending { it.date }
-            GraphType.SPENT -> stats.spendLog.sortedByDescending { it.date }
+        GraphType.EARNED -> stats.earnedLog.sortedBy { it.date }
+            GraphType.SPENT -> stats.spendLog.sortedBy { it.date }
     }
 
     Surface(modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.background)) {
-
         LazyColumn(modifier = Modifier) {
             item{
                 Column(modifier = Modifier
                     .padding(vertical = 10.dp)
                     .clip(RoundedCornerShape(5))
                     .background(MaterialTheme.colorScheme.tertiaryContainer)
-
                 ){
-
                     Column(modifier = Modifier.padding(top = 22.dp, start = 15.dp, end = 15.dp)){
-                        Text(text = "Current Balance",
-                            style = MaterialTheme.typography.displaySmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Row {
-                            Text(text = "${savedCurrency.symbols}${stats.balance}",
-                                style = MaterialTheme.typography.displayLarge,
-                                color = MaterialTheme.colorScheme.primary)
+                        Row(
+                            horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column {
+                                Text(text = "Current Balance",
+                                    style = MaterialTheme.typography.displaySmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Row {
+                                    Text(text = "${savedCurrency.symbols}${stats.balance}",
+                                        style = MaterialTheme.typography.displayLarge,
+                                        color = MaterialTheme.colorScheme.primary)
+                                }
+                            }
+//                            TextButton(
+//                                onClick = {}
+//                            ){
+//                                Text(text = "Expense",
+//                                    style = MaterialTheme.typography.displaySmall)
+//                            }
                         }
-                        if(listInDisplay.size > 5){
+                        if (listInDisplay.size > 2) {
                             LineChart(
-                                data = listOf(
-                                    Pair("${listInDisplay[0].date.dayOfMonth} ${listInDisplay[0].date.month.name.take(3)}", listInDisplay[0].amount.toDouble()),
-                                    Pair("${listInDisplay[1].date.dayOfMonth} ${listInDisplay[1].date.month.name.take(3)}", listInDisplay[1].amount.toDouble()),
-                                    Pair("${listInDisplay[2].date.dayOfMonth} ${listInDisplay[2].date.month.name.take(3)}", listInDisplay[2].amount.toDouble()),
-                                    Pair("${listInDisplay[3].date.dayOfMonth} ${listInDisplay[3].date.month.name.take(3)}", listInDisplay[3].amount.toDouble()),
-                                    Pair("${listInDisplay[4].date.dayOfMonth} ${listInDisplay[4].date.month.name.take(3)}", listInDisplay[4].amount.toDouble()),
-                                    Pair("${listInDisplay[5].date.dayOfMonth} ${listInDisplay[5].date.month.name.take(3)}", listInDisplay[5].amount.toDouble()),
-
-                                ),
+                                data = getSpacedTransactions(listInDisplay).take(listInDisplay.size+1).map { item ->
+                                    val label = "${item.date.dayOfMonth} ${item.date.month.name.take(3)}"
+                                    label to item.amount.toDouble()
+                                },
                                 modifier = Modifier
                                     .height(220.dp)
                                     .fillMaxWidth()
@@ -126,7 +135,9 @@ fun StatisticsScreen(
                     deleteTransaction = {deleteTransaction.invoke(it)},
                     savedCurrency
                 )
-
+            }
+            item {
+                Spacer(Modifier.height(80.dp))
             }
 
         }
@@ -136,4 +147,19 @@ fun StatisticsScreen(
 
 enum class GraphType{
     EARNED, SPENT
+}
+
+
+private fun getSpacedTransactions(fullList: List<Transaction>): List<Transaction> {
+    val requiredPoints = 5
+
+    return when {
+        fullList.size <= requiredPoints -> fullList
+        else -> {
+            val step = (fullList.size - 1).toDouble() / (requiredPoints - 1)
+            (0 until requiredPoints).map { i ->
+                fullList[(i * step).roundToInt()]
+            }
+        }
+    }
 }

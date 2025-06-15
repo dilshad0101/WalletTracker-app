@@ -1,5 +1,6 @@
 package com.app.spendr.presentation.components
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -19,14 +20,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.app.spendr.R
 import com.app.spendr.presentation.editor.Description
 import com.app.spendr.presentation.home.UsersCurrency
+import kotlinx.coroutines.Dispatchers
+import okhttp3.Dispatcher
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TransactionCard(
     title: String,
@@ -36,6 +41,7 @@ fun TransactionCard(
     onDelete: () -> Unit,
     savedCurrency: UsersCurrency
 ){
+    val context = LocalContext.current
 
     val sign = if (isSavings) "+" else "-"
     Column {
@@ -71,8 +77,10 @@ fun TransactionCard(
                             ) {
                             //Size 80
                             val imageSize = 68
+
                             IconsFromURL(
-                                when(description){
+                                context = context,
+                                url = when(description){
                                     Description.Family.text -> "https://img.icons8.com/metro/$imageSize/000000/family.png"
                                     Description.Food.text -> "https://img.icons8.com/ios-filled/$imageSize/000000/hamburger.png"
                                     Description.Friend.text -> "https://img.icons8.com/ios-filled/$imageSize/000000/hang-10.png"
@@ -86,7 +94,6 @@ fun TransactionCard(
                                         "https://img.icons8.com/ios-filled/80/000000/merchant-account.png"
                                     }
                                 }
-
                             )
                         }
                         Column {
@@ -154,8 +161,20 @@ fun TransactionCard(
 }
 
 @Composable
-fun IconsFromURL(url: String,modifier: Modifier = Modifier) {
-    SubcomposeAsyncImage(model =url,
+fun IconsFromURL(
+    url: String,
+    modifier: Modifier = Modifier,
+    context: Context) {
+
+    val imageRequest = ImageRequest.Builder(context)
+        .data(url)
+        .dispatcher(Dispatchers.IO)
+        .memoryCacheKey(url)
+        .diskCacheKey(url)
+        .diskCachePolicy(CachePolicy.ENABLED)
+        .memoryCachePolicy(CachePolicy.ENABLED)
+        .build()
+    SubcomposeAsyncImage(model =imageRequest,
         contentDescription =null,
         contentScale = ContentScale.FillBounds,
         error = {

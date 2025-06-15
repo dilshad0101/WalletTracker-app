@@ -30,6 +30,6 @@ val INR = UsersCurrency(text = INR_VAL,
     )
 val USD = UsersCurrency(
     text = USD_VAL,
-    symbols = Currency.getInstance(Locale.US).symbol,
+    symbols = Currency.getInstance("USD").symbol,
     iconURL = "https://img.icons8.com/fluency/$defaultFlagIconSize/usa-circular.png"
 )

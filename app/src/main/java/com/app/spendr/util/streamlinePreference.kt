@@ -11,6 +11,7 @@ fun streamlinePreference(preferenceValue: String?): UsersCurrency {
         GBP_VAL -> POUND
         EUR_VAL -> EURO
         INR_VAL -> INR
+        null -> INR
         else -> USD
     }
 }

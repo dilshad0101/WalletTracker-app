@@ -1,5 +1,10 @@
 package com.app.spendr.presentation.navigation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -32,7 +37,13 @@ fun Navigation(owner: ViewModelStoreOwner){
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.MainScreen.route){
-        composable(Screen.MainScreen.route){
+        composable(Screen.MainScreen.route,
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+            popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) }
+
+        ){
             EntryScreenRoute(
                 deletionEvent = {dataViewModel.deleteTransaction(it)},
                 transactionData = transactionData,
@@ -45,7 +56,13 @@ fun Navigation(owner: ViewModelStoreOwner){
             )
         }
 
-        composable(Screen.Savings.route){
+        composable(Screen.Savings.route,
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+            popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) }
+
+        ){
             SavingsScreen(
                 navController,
             onSave = {
@@ -55,7 +72,13 @@ fun Navigation(owner: ViewModelStoreOwner){
                 savedCurrency = streamlinePreference(savedCurrency)
             )
         }
-        composable(Screen.Expense.route){
+        composable(Screen.Expense.route,
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+            popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) }
+
+            ){
             ExpenseScreen(navController = navController, onSave = {
                 dataViewModel.addTransaction(it)
                 navController.navigate(Screen.MainScreen.route)

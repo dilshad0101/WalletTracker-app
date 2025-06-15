@@ -34,59 +34,58 @@ fun HomeScreen(
     }
 
     Scaffold() { padding ->
-        Column(modifier = Modifier
+        LazyColumn(modifier = Modifier
             .padding(padding)
         ) {
-            BalanceCard(balance =  {
-                var balance by mutableStateOf(0)
-                balance = extractData(transactionData).balance
-                return@BalanceCard balance
-                                   },
-                selectedCurrency = savedCurrency,
-                onCurrencySelection = {
-                    changePreference.invoke(it)
-                }
-                )
-            Row(modifier = Modifier.padding(top = 8.dp)){
-                NavigationCards(
-                    savingsButton = true,
-                    onClick = { navController.navigate(Screen.Savings.route) }
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-
-                NavigationCards(
-                    savingsButton = false,
-                    onClick = { navController.navigate(Screen.Expense.route) }
-                    )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Your Transactions",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primary)
-            Spacer(modifier = Modifier.height(20.dp))
-            AnimatedVisibility(visible = transactionData.isNotEmpty()) {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp),
-                    modifier = Modifier.animateContentSize()
-                    ) {
-                    this.items(items = transactionData.reversed()) {
-                        TransactionCard(
-                            title = it.title,
-                            description = it.description,
-                            amount = it.amount,
-                            isSavings = it.isSavings,
-                            onDelete = { deleteTransaction.invoke(it)},
-                            savedCurrency = savedCurrency
-                        )
+            this.item {
+                BalanceCard(balance =  {
+                    var balance by mutableStateOf(0)
+                    balance = extractData(transactionData).balance
+                    return@BalanceCard balance
+                },
+                    selectedCurrency = savedCurrency,
+                    onCurrencySelection = {
+                        changePreference.invoke(it)
                     }
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
+                )
+                Row(modifier = Modifier.padding(top = 8.dp)){
+                    NavigationCards(
+                        savingsButton = true,
+                        onClick = { navController.navigate(Screen.Savings.route) }
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
 
-
+                    NavigationCards(
+                        savingsButton = false,
+                        onClick = { navController.navigate(Screen.Expense.route) }
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "Your Transactions",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.height(20.dp))
             }
-
-
-
+            this.item{
+                AnimatedVisibility(visible = transactionData.isNotEmpty()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(18.dp),
+                        modifier = Modifier.animateContentSize()
+                    ) {
+                        transactionData.reversed().forEach {
+                            TransactionCard(
+                                title = it.title,
+                                description = it.description,
+                                amount = it.amount,
+                                isSavings = it.isSavings,
+                                onDelete = { deleteTransaction.invoke(it)},
+                                savedCurrency = savedCurrency
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(80.dp))
+            }
 
         }
         }

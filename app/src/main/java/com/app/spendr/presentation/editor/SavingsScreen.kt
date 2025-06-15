@@ -118,7 +118,7 @@ fun SavingsScreen(navController: NavController,
                 horizontalArrangement = Arrangement.spacedBy(7.dp),
             ) {
                 (Description.descriptions).forEach { text:String ->
-                    Chips(text = text, isEnabled = enabledChip == text|| contentTextField.text.contains(text,ignoreCase = true)) {
+                    Chips(text = text, isEnabled = enabledChip == text) {
                         enabledChip = if (enabledChip == text) {
                             ""
                         } else {

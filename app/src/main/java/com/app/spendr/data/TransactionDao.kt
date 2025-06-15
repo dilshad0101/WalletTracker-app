@@ -13,6 +13,12 @@ interface TransactionDao {
     @Query("SELECT * FROM app_data ORDER By id ASC")
     fun readAllData(): LiveData<List<Transaction>>
 
+
+    //For Widget
+    @Query("SELECT * FROM app_data ORDER BY id ASC")
+    suspend fun getAllTransactionsForWidget(): List<Transaction>
+
+
     @Delete
     suspend fun deleteTransaction(transaction: Transaction)
 
